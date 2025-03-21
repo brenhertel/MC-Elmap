@@ -103,6 +103,7 @@ class MC_ElMap(object):
         self.E = np.zeros((self.n_size, self.n_size))
         self.E += e1
         self.E += e2
+        self.E[0, 0] = 0
         if self.n_dims >= 2:
             self.E[self.n_nodes, self.n_nodes-1] = 0
             self.E[self.n_nodes, self.n_nodes] = 0
@@ -116,6 +117,8 @@ class MC_ElMap(object):
         self.R[1:,0:self.n_size-1] += r1
         self.R += r2
         self.R[:-1,1:self.n_size] += r1
+        self.R[0, 1] = 2
+        self.R[-1, -2] = 2
         if self.n_dims >= 2:
             self.R[self.n_nodes, self.n_nodes+1] = 0
             self.R[self.n_nodes, self.n_nodes-1] = 0
@@ -162,6 +165,7 @@ class MC_ElMap(object):
         E = np.zeros((self.n_pts, self.n_pts))
         E += e1
         E += e2
+        E[0, 0] = 0
         
         for i in range(self.num_trajs):
             E[i*self.traj_len, i*self.traj_len] = 0
@@ -194,6 +198,8 @@ class MC_ElMap(object):
         R[1:,0:self.n_pts-1] += r1
         R += r2
         R[:-1,1:self.n_pts] += r1
+        R[0, 1] = 2
+        R[-1, -2] = 2
         
         for i in range(self.num_trajs):
             R[i*self.traj_len, i*self.traj_len+1] = 0
@@ -282,6 +288,7 @@ class MC_ElMap(object):
     def calc_parameters(self, x, A, B):
         #(scaling_factors, A, B, AT, BT, AL, BL) = args
         x_repro = cp.Variable((self.n_size, 1))
+        x_repro.value = self.nodes_stacked
         if self.ds:
             objective = cp.Minimize((x[0] / self.spatial_beta) * cp.sum_squares(A @ x_repro - B @ self.traj_stacked) 
                                      + (x[1] / self.tangent_beta) * cp.sum_squares(self.E @ x_repro - self.E @ self.traj_ds_stacked) 
@@ -295,7 +302,7 @@ class MC_ElMap(object):
                                      + self.stretch_const * cp.sum_squares(self.E @ x_repro)
                                      + self.bend_const    * cp.sum_squares(self.R @ x_repro))
         problem = cp.Problem(objective)
-        problem.solve()
+        problem.solve(solver=cp.OSQP, warm_start=True, verbose=False, max_iter=1000000)
         if x_repro.value is not None:
             repro = x_repro.value
             #print(np.shape(AL), np.shape(self.R2), np.shape(repro))

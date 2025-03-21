@@ -132,6 +132,34 @@ def sum_of_squared_error(exp_data, num_data):
         sum += (np.linalg.norm(exp_data[i] - num_data[i]))**2
     return sum
     
+def align_SSE(exp_data, num_data):
+    #print(np.shape(exp_data))
+    #print(np.shape(num_data))
+    exp = exp_data - exp_data[0]
+    num = num_data - num_data[0]
+    #assume exp data is always larger
+    new_exp = [exp[0]]
+    indeces = [i for i in range(1, len(exp) - 1)]
+    for i in range(1, len(num) - 1):
+        best_ind = indeces[0]
+        best_val = np.linalg.norm(exp[indeces[0]] - num[i])
+        for j in indeces:
+            val = np.linalg.norm(exp[j] - num[i])
+            if val < best_val:
+                best_val = val
+                best_ind = j
+        #print([best_ind, exp[best_ind]])
+        new_exp.append(exp[best_ind])
+        indeces.remove(best_ind)
+    new_exp.append(exp[-1])
+    new_exp = np.array(new_exp)
+    #plt.figure()
+    #plt.plot(exp[:, 0], exp[:, 1], 'r.')
+    #plt.plot(new_exp[:, 0], new_exp[:, 1], 'g.')
+    #plt.plot(num[:, 0], num[:, 1], 'b.')
+    #plt.show()
+    return sum_of_squared_error(new_exp, num)  
+    
 def calc_jerk(traj):
     (n_pts, n_dims) = np.shape(traj)
     ttl = 0.
