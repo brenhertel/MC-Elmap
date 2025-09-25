@@ -12,10 +12,12 @@ This repository implements the method described in the paper above using Python.
 
 If you use the code present in this repository, please cite the following paper:
 ```
-@inproceedings{hertel2025mcelmap,
-  title={Robot Learning Using Multi-Coordinate Elastic Maps},
+@INPROCEEDINGS{hertel2025mc_elmap,
   author={Hertel, Brendan and Azadeh, Reza},
-  booktitle={22nd International Conference on Ubiquitous Robots (UR)},
+  booktitle={2025 22nd International Conference on Ubiquitous Robots (UR)}, 
+  title={Robot Learning Using Multi-Coordinate Elastic Maps}, 
   year={2025},
-}
+  pages={301-306},
+  doi={10.1109/UR65550.2025.11078120}}
+
 ```
