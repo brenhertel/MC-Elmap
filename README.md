@@ -18,6 +18,6 @@ If you use the code present in this repository, please cite the following paper:
   title={Robot Learning Using Multi-Coordinate Elastic Maps}, 
   year={2025},
   pages={301-306},
-  doi={10.1109/UR65550.2025.11078120}}
-
+  doi={10.1109/UR65550.2025.11078120}
+}
 ```
